@@ -48,7 +48,8 @@ public class NBA {
         
         System.out.println("1 : Points \n"
                 + "2 : assists\n"
-                + "3 : add");
+                + "3 : add\n"
+                + "4 : remove");
         int choice = scanner.nextInt();
     
         switch(choice){
