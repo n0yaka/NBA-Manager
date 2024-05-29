@@ -42,7 +42,7 @@ public class NBA {
     // Main method to run the program
     public static void main(String[] args) {
         NBA nba = new NBA();
-        AddToFirstTeam add = new AddToFirstTeam();
+        HandleFirstTeam add = new HandleFirstTeam();
         
         Scanner scanner = new Scanner(System.in);
         
