@@ -5,13 +5,15 @@
 package nba.ds.asgmnt;
 
 import java.util.*;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
  * @author Al Fatih
  */
 public class Graph {
-    private class Edge {
+     public class Edge {
         String destination;
         int weight;
 
@@ -26,7 +28,7 @@ public class Graph {
         }
     }
 
-    private Map<String, LinkedList<Edge>> adjList;
+    private  Map<String, LinkedList<Edge>> adjList;
 
     public Graph() {
         adjList = new HashMap<>();
@@ -40,6 +42,10 @@ public class Graph {
         adjList.get(source).add(new Edge(destination, weight));
     }
 
+    public Map<String, LinkedList<Edge>> getAdjList() {
+        return adjList;
+    }
+    
     public void displayGraph() {
         for (String vertex : adjList.keySet()) {
             System.out.print("Team " + vertex + " is connected to: ");
@@ -110,7 +116,79 @@ public class Graph {
 
         // Display the graph
         graph.displayGraph();
+        
+        // Create and display the GUI
+        GraphGUI.createAndShowGUI(graph);
     }
 }
 
+class GraphPanel extends JPanel {
+    private Graph graph;
+    private Map<String, Point> nodePositions;
+
+    public GraphPanel(Graph graph) {
+        this.graph = graph;
+        nodePositions = new HashMap<>();
+        setPreferredSize(new Dimension(800, 600));
+        initializeNodePositions();
+    }
+
+    private void initializeNodePositions() {
+        // Manually setting positions for simplicity
+        nodePositions.put("Spurs", new Point(100, 100));
+        nodePositions.put("Warriors", new Point(300, 100));
+        nodePositions.put("Celtics", new Point(500, 100));
+        nodePositions.put("Heat", new Point(700, 100));
+        nodePositions.put("Lakers", new Point(300, 300));
+        nodePositions.put("Suns", new Point(100, 500));
+        nodePositions.put("Magic", new Point(500, 500));
+        nodePositions.put("Nuggets", new Point(700, 300));
+        nodePositions.put("Thunder", new Point(100, 300));
+        nodePositions.put("Rockets", new Point(500, 300));
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawGraph(g);
+    }
+
+    private void drawGraph(Graphics g) {
+        Map<String, LinkedList<Graph.Edge>> adjList = graph.getAdjList();
+        g.setColor(Color.BLACK);
+
+        // Draw edges
+        for (String vertex : adjList.keySet()) {
+            Point src = nodePositions.get(vertex);
+            for (Graph.Edge edge : adjList.get(vertex)) {
+                Point dest = nodePositions.get(edge.destination);
+                g.drawLine(src.x, src.y, dest.x, dest.y);
+                // Draw weight
+                int midX = (src.x + dest.x) / 2;
+                int midY = (src.y + dest.y) / 2;
+                g.drawString(String.valueOf(edge.weight), midX, midY);
+            }
+        }
+
+        // Draw vertices
+        for (String vertex : nodePositions.keySet()) {
+            Point pos = nodePositions.get(vertex);
+            g.setColor(Color.RED);
+            g.fillOval(pos.x - 15, pos.y - 15, 30, 30);
+            g.setColor(Color.BLACK);
+            g.drawString(vertex, pos.x - 15, pos.y - 20);
+        }
+    }
+}
+
+ class GraphGUI {
+    public static void createAndShowGUI(Graph graph) {
+        JFrame frame = new JFrame("NBA Team Graph");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new GraphPanel(graph));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+}
 
