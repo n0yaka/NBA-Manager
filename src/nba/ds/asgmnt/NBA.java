@@ -49,7 +49,8 @@ public class NBA {
         System.out.println("1 : Points \n"
                 + "2 : assists\n"
                 + "3 : add\n"
-                + "4 : remove");
+                + "4 : remove\n"
+                + "5 : check");
         int choice = scanner.nextInt();
     
         switch(choice){
@@ -68,6 +69,8 @@ public class NBA {
                 System.out.println("enter player id");
                 int removeId = scanner.nextInt();
                 add.RemovePlayer(removeId);
+            case 5 :
+                add.TeamCompChecker();
         }
     }
     
