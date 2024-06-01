@@ -22,6 +22,8 @@ public class NBAPlayer {
     private String name;
     private String team;
     private String position;
+    private double height;
+    private double weight;
     private double points;
     private double rebounds;
     private double assists;
@@ -29,11 +31,13 @@ public class NBAPlayer {
     private double blocks;
     private double salary;
 
-    public NBAPlayer(int id, String name, String team, String position, double points, double rebounds, double assists, double blocks, double steals, double salary, double steals1, double salary1) {
+    public NBAPlayer(int id, String name, String team, String position, double height, double weight, double points, double rebounds, double assists, double blocks, double steals, double salary) {
         this.id = id;
         this.name = name;
         this.team = team;
         this.position = position;
+        this.height = height;
+        this.weight = weight;
         this.points = points;
         this.rebounds = rebounds;
         this.assists = assists;
@@ -53,6 +57,9 @@ public class NBAPlayer {
     public double getSteals() { return steals; }
     public double getBlocks() { return blocks; }
     public double getSalary() { return salary; }
+    public double getHeight() {return height;}
+    public double getWeight() {return weight;}
+    
 
     @Override
     public String toString() {

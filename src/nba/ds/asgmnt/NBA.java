@@ -43,14 +43,18 @@ public class NBA {
     public static void main(String[] args) {
         NBA nba = new NBA();
         HandleFirstTeam add = new HandleFirstTeam();
+        Injuries injury = new Injuries();
         
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("1 : Points \n"
+        while(true){
+            System.out.println("1 : Points \n"
                 + "2 : assists\n"
                 + "3 : add\n"
                 + "4 : remove\n"
-                + "5 : check");
+                + "5 : check\n"
+                + "6 : injury\n"
+                + "-1 : exit");
         int choice = scanner.nextInt();
     
         switch(choice){
@@ -69,9 +73,35 @@ public class NBA {
                 System.out.println("enter player id");
                 int removeId = scanner.nextInt();
                 add.RemovePlayer(removeId);
+                break;
             case 5 :
                 add.TeamCompChecker();
+                break;
+            case 6 :
+                System.out.println("1 : Add injured player\n"
+                        + "2 : remove recovered player\n"
+                        + "3 : injury list");
+                int choiceInjury = scanner.nextInt();
+                switch(choiceInjury){
+                    case 1 :
+                        System.out.println("enter player id");
+                        int injuryId = scanner.nextInt();
+                        injury.addToInjuryStack(injuryId);
+                        break;
+                    case 2 :
+                        injury.removeFromInjuryStack();
+                        break;
+                    case 3 :
+                        System.out.println("\nInjury list\n");
+                        injury.injuryList();
+                        break;
+                }
+                break;
+            case -1 :
+                return;
+            }
         }
+        
     }
     
 }
