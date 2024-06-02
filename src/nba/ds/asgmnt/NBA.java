@@ -44,6 +44,8 @@ public class NBA {
         NBA nba = new NBA();
         HandleFirstTeam add = new HandleFirstTeam();
         Injuries injury = new Injuries();
+        Contract contract = new Contract();
+        PlayerPerformance stats = new PlayerPerformance();
         
         Scanner scanner = new Scanner(System.in);
         
@@ -54,6 +56,8 @@ public class NBA {
                 + "4 : remove\n"
                 + "5 : check\n"
                 + "6 : injury\n"
+                + "7 : contract\n"
+                + "8 : performance\n"
                 + "-1 : exit");
         int choice = scanner.nextInt();
     
@@ -94,6 +98,48 @@ public class NBA {
                     case 3 :
                         System.out.println("\nInjury list\n");
                         injury.injuryList();
+                        break;
+                }
+                break;
+            case 7 :
+                System.out.println("1 : add to queue\n"
+                        + "2 : extend contract\n"
+                        + "3 : queue list");
+                int contractChoice = scanner.nextInt();
+                switch(contractChoice){
+                    case 1:
+                        System.out.println("player id");
+                        int contractId = scanner.nextInt();
+                        contract.ContractExtension(contractId);
+                        System.out.println();
+                        break;
+                    case 2:
+                        System.out.println("Extending contract...");
+                        contract.ExtendContract();
+                        System.out.println();
+                        break;
+                    case 3:
+                        System.out.println("Queue list :");
+                        contract.ContractQueueList();
+                        System.out.println();
+                        break;
+                }
+                break;
+            case 8 :
+                stats.allPlayers();
+                System.out.println("1 : forwards\n"
+                        + "2 : centers\n"
+                        + "3 : guards");
+                int performChoice = scanner.nextInt();
+                switch(performChoice){
+                    case 1:
+                        stats.sortForwardsByPerformance();
+                        break;
+                    case 2:
+                        stats.sortCentersByPerformance();
+                        break;
+                    case 3:
+                        stats.sortGuardsByPerformance();
                         break;
                 }
                 break;

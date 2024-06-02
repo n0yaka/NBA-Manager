@@ -30,6 +30,7 @@ public class NBAPlayer {
     private double steals;
     private double blocks;
     private double salary;
+    private double score;
 
     public NBAPlayer(int id, String name, String team, String position, double height, double weight, double points, double rebounds, double assists, double blocks, double steals, double salary) {
         this.id = id;
@@ -46,6 +47,14 @@ public class NBAPlayer {
         this.salary = salary;
     }
 
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    public double getScore() {
+        return score;
+    }
+    
     // Getters for attributes
     public int getId() { return id; }
     public String getName() { return name; }
@@ -64,16 +73,16 @@ public class NBAPlayer {
     @Override
     public String toString() {
         return "NBAPlayer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", team='" + team + '\'' +
-                ", position='" + position + '\'' +
-                ", points=" + points +
-                ", rebounds=" + rebounds +
-                ", assists=" + assists +
-                ", steals=" + steals +
-                ", blocks=" + blocks +
-                ", salary=" + salary +
+                "id = " + id +
+                ", name = '" + name + '\'' +
+                ", team = '" + team + '\'' +
+                ", position = '" + position + '\'' +
+                ", points = " + points +
+                ", rebounds = " + rebounds +
+                ", assists = " + assists +
+                ", steals = " + steals +
+                ", blocks = " + blocks +
+                ", salary = " + salary +
                 '}';
     }
 }
