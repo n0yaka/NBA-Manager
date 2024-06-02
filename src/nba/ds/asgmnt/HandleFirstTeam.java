@@ -21,8 +21,6 @@ public class HandleFirstTeam {
         }
     }
     
-    
-    
     public void TeamCompChecker(){
         try{
             String checkSql = "select position,salary from firstteam";

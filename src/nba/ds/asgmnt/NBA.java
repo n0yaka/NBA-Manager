@@ -46,6 +46,7 @@ public class NBA {
         Injuries injury = new Injuries();
         Contract contract = new Contract();
         PlayerPerformance stats = new PlayerPerformance();
+        DynamicSearch search = new DynamicSearch();
         
         Scanner scanner = new Scanner(System.in);
         
@@ -143,6 +144,33 @@ public class NBA {
                         break;
                 }
                 break;
+            case 9:
+                     System.out.println("Enter search criteria:");
+                    System.out.print("Name (leave empty for no filter): ");
+                    String name = scanner.nextLine().trim();
+                    System.out.print("Team (leave empty for no filter): ");
+                    String team = scanner.nextLine().trim();
+                    System.out.print("Position (leave empty for no filter): ");
+                    String position = scanner.nextLine().trim();
+                    System.out.print("Min Points per Game (leave empty for no filter): ");
+                    String minPointsStr = scanner.nextLine().trim();
+                    Double minPoints = minPointsStr.isEmpty() ? null : Double.valueOf(minPointsStr);
+                    System.out.print("Max Points per Game (leave empty for no filter): ");
+                    String maxPointsStr = scanner.nextLine().trim();
+                    Double maxPoints = maxPointsStr.isEmpty() ? null : Double.valueOf(maxPointsStr);
+                    System.out.print("Min Rebounds per Game (leave empty for no filter): ");
+                    String minReboundsStr = scanner.nextLine().trim();
+                    Double minRebounds = minReboundsStr.isEmpty() ? null : Double.valueOf(minReboundsStr);
+                    System.out.print("Max Rebounds per Game (leave empty for no filter): ");
+                    String maxReboundsStr = scanner.nextLine().trim();
+                    Double maxRebounds = maxReboundsStr.isEmpty() ? null : Double.valueOf(maxReboundsStr);
+
+                    List<NBAPlayer> searchResults = search.searchPlayers(name, team, position, minPoints, maxPoints, minRebounds, maxRebounds);
+                    System.out.println("Search Results:");
+                    for (NBAPlayer player : searchResults) {
+                        System.out.println(player);
+                    }
+                    break;
             case -1 :
                 return;
             }
