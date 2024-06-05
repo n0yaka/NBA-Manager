@@ -91,7 +91,10 @@ public class NBA {
                     case 1 :
                         System.out.println("enter player id");
                         int injuryId = scanner.nextInt();
-                        injury.addToInjuryStack(injuryId);
+                        scanner.nextLine();
+                        System.out.print("Injury : ");
+                        String injuryReason = scanner.nextLine();
+                        injury.addToInjuryStack(injuryId, injuryReason);
                         break;
                     case 2 :
                         injury.removeFromInjuryStack();
