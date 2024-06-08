@@ -38,6 +38,55 @@ public class NBA {
             System.out.println(nbaPlayer);
         }
     }
+    
+     // Method to display the graph
+    public void displayGraph() {
+        Graph graph = new Graph();
+        String[] teams = {"Spurs", "Warriors", "Celtics", "Heat", "Lakers", "Suns", "Magic", "Nuggets", "Thunder", "Rockets"};
+
+        for (String team : teams) {
+            graph.addVertex(team);
+        }
+
+        graph.addEdge("Spurs", "Suns", 500);
+        graph.addEdge("Spurs", "Thunder", 678);
+        graph.addEdge("Spurs", "Rockets", 983);
+        graph.addEdge("Spurs", "Magic", 1137);
+        graph.addEdge("Suns", "Lakers", 577);
+        graph.addEdge("Suns", "Spurs", 500);
+        graph.addEdge("Thunder", "Lakers", 1901);
+        graph.addEdge("Thunder", "Warriors", 2214);
+        graph.addEdge("Thunder", "Nuggets", 942);
+        graph.addEdge("Thunder", "Rockets", 778);
+        graph.addEdge("Thunder", "Spurs", 678);
+        graph.addEdge("Warriors", "Lakers", 554); 
+        graph.addEdge("Warriors", "Nuggets", 1507);
+        graph.addEdge("Warriors", "Thunder", 2214);
+        graph.addEdge("Magic", "Rockets", 458);
+        graph.addEdge("Magic", "Heat", 268);
+        graph.addEdge("Magic", "Spurs", 1137);
+        graph.addEdge("Celtics", "Nuggets", 2845);
+        graph.addEdge("Celtics", "Rockets", 2584);
+        graph.addEdge("Celtics", "Heat", 3045);
+        graph.addEdge("Heat", "Magic", 268);
+        graph.addEdge("Heat", "Celtics", 3045);
+        graph.addEdge("Rockets", "Thunder", 778);
+        graph.addEdge("Rockets", "Spurs", 983);
+        graph.addEdge("Rockets", "Magic", 458);
+        graph.addEdge("Rockets", "Celtics", 2584);
+        graph.addEdge("Nuggets", "Warriors", 1507);
+        graph.addEdge("Nuggets", "Thunder", 942);
+        graph.addEdge("Nuggets", "Celtics", 2845);
+        graph.addEdge("Lakers", "Warriors", 554);
+        graph.addEdge("Lakers", "Thunder", 1901);
+        graph.addEdge("Lakers", "Suns", 577);
+
+        // Display the graph
+        graph.displayGraph();
+        
+        // Create and display the GUI
+        GraphGUI.createAndShowGUI(graph);
+    }
 
     // Main method to run the program
     public static void main(String[] args) {
@@ -59,6 +108,8 @@ public class NBA {
                 + "6 : injury\n"
                 + "7 : contract\n"
                 + "8 : performance\n"
+                + "9 : dynamic search\n"
+                    + "10 : graph\n"       
                 + "-1 : exit");
         int choice = scanner.nextInt();
     
@@ -148,7 +199,7 @@ public class NBA {
                 }
                 break;
             case 9:
-                     System.out.println("Enter search criteria:");
+                    System.out.println("Enter search criteria:");
                     System.out.print("Name (leave empty for no filter): ");
                     String name = scanner.nextLine().trim();
                     System.out.print("Team (leave empty for no filter): ");
@@ -173,6 +224,9 @@ public class NBA {
                     for (NBAPlayer player : searchResults) {
                         System.out.println(player);
                     }
+                    break;
+            case 10:
+                    nba.displayGraph();
                     break;
             case -1 :
                 return;
