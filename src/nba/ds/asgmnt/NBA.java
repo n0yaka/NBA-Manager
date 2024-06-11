@@ -83,9 +83,8 @@ public class NBA {
 
         // Display the graph
         graph.displayGraph();
+        graph.display();
         
-        // Create and display the GUI
-        GraphGUI.createAndShowGUI(graph);
     }
 
     // Main method to run the program

@@ -37,7 +37,8 @@ public class App extends JFrame {
     Injuries injury = new Injuries();
     Contract contract = new Contract();
     PlayerPerformance score = new PlayerPerformance();
-    Graph graph = new Graph();
+    
+    private Graph nbaGraph; 
     
     public App() {
         setTitle("NBA Management App");
@@ -63,7 +64,7 @@ public class App extends JFrame {
         
         searchButton.addActionListener(e -> showSearchDialog());
         
-        nbaCity.addActionListener(e -> graph.displayGraph());
+        nbaCity.addActionListener(e -> displayNbaCityGraph());
 
         freeAgentButton.addActionListener(e -> showFreeAgent());
         
@@ -125,20 +126,96 @@ public class App extends JFrame {
                 handle.RemovePlayer(playerId);
             }
         });
+        
+        nbaCity = new JButton("City");
+        nbaCity.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayNbaCityGraph();
+            }
+        });
 
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(viewButton);
         buttonPanel.add(injuryButton);
         buttonPanel.add(contractButton);
+        buttonPanel.add(nbaCity);
 
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
         container.add(scrollPane, BorderLayout.CENTER);
         container.add(buttonPanel, BorderLayout.SOUTH);
     }
-
     
+     private void displayNbaCityGraph() {
+        nbaGraph = new Graph();
+
+        // Adding vertices (team names)
+        String[] teams = {
+            "Spurs", "Warriors", "Celtics", "Heat",
+            "Lakers", "Suns", "Magic", "Nuggets",
+            "Thunder", "Rockets"
+        };
+
+        for (String team : teams) {
+            nbaGraph.addVertex(team);
+        }
+
+        // Adding edges with weights 
+        nbaGraph.addEdge("Spurs", "Suns", 500);
+        nbaGraph.addEdge("Spurs", "Thunder", 678);
+        nbaGraph.addEdge("Spurs", "Rockets", 983);
+        nbaGraph.addEdge("Spurs", "Magic", 1137);
+
+        nbaGraph.addEdge("Suns", "Lakers", 577);
+        nbaGraph.addEdge("Suns", "Spurs", 500);
+
+        nbaGraph.addEdge("Thunder", "Lakers", 1901);
+        nbaGraph.addEdge("Thunder", "Warriors", 2214);
+        nbaGraph.addEdge("Thunder", "Nuggets", 942);
+        nbaGraph.addEdge("Thunder", "Rockets", 778);
+        nbaGraph.addEdge("Thunder", "Spurs", 678);
+
+        nbaGraph.addEdge("Warriors", "Lakers", 554); 
+        nbaGraph.addEdge("Warriors", "Nuggets", 1507);
+        nbaGraph.addEdge("Warriors", "Thunder", 2214);
+
+        nbaGraph.addEdge("Magic", "Rockets", 458);
+        nbaGraph.addEdge("Magic", "Heat", 268);
+        nbaGraph.addEdge("Magic", "Spurs", 1137);
+
+        nbaGraph.addEdge("Celtics", "Nuggets", 2845);
+        nbaGraph.addEdge("Celtics", "Rockets", 2584);
+        nbaGraph.addEdge("Celtics", "Heat", 3045);
+
+        nbaGraph.addEdge("Heat", "Magic", 268);
+        nbaGraph.addEdge("Heat", "Celtics", 3045);
+
+        nbaGraph.addEdge("Rockets", "Thunder", 778);
+        nbaGraph.addEdge("Rockets", "Spurs", 983);
+        nbaGraph.addEdge("Rockets", "Magic", 458);
+        nbaGraph.addEdge("Rockets", "Celtics", 2584);
+
+        nbaGraph.addEdge("Nuggets", "Warriors", 1507);
+        nbaGraph.addEdge("Nuggets", "Thunder", 942);
+        nbaGraph.addEdge("Nuggets", "Celtics", 2845);
+
+        nbaGraph.addEdge("Lakers", "Warriors", 554);
+        nbaGraph.addEdge("Lakers", "Thunder", 1901);
+        nbaGraph.addEdge("Lakers", "Suns", 577);
+        
+        nbaGraph.displayGraph();
+
+        // Run BFS, DFS and heuristic TSP
+        Map<String, Integer> dijkstraOrder = nbaGraph.dijkstra("Spurs");
+        List<String> bfsOrder = nbaGraph.bfs("Spurs");
+        List<String> dfsOrder = nbaGraph.dfs("Spurs");
+        List<String> tspOrder = nbaGraph.heuristicTSP("Spurs");
+
+        GraphGUI.createAndShowGUI(nbaGraph, dijkstraOrder, bfsOrder, dfsOrder, tspOrder);
+    }
+   
     private void viewFirstTeam() {
     try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
          Statement stmt = conn.createStatement();
@@ -583,8 +660,7 @@ private void showPerformance(String position) {
                 searchDialog.dispose();
             }
         });
-        
-        
+
 
         searchDialog.add(nameLabel);
         searchDialog.add(nameField);
@@ -605,6 +681,8 @@ private void showPerformance(String position) {
 
         searchDialog.setVisible(true);
     }
+ 
+
     
     private void displaySearchResults(List<NBAPlayer> players) {
         String[] columnNames = {"ID", "Name", "Team", "Position", "Height", "Weight", "Points", "Rebounds", "Assists", "Blocks", "Steals", "Salary"};
@@ -624,13 +702,306 @@ private void showPerformance(String position) {
         resultsFrame.setVisible(true);
     }
     
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             App app = new App();
             app.setVisible(true);
         });
     }
-
-    
-
 }
+
+class Graph {
+    public class Edge {
+        String destination;
+        int weight;
+
+        Edge(String destination, int weight) {
+            this.destination = destination;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + destination + ", " + weight + ")";
+        }
+    }
+
+    private final Map<String, LinkedList<Edge>> adjList;
+
+    public Graph() {
+        adjList = new HashMap<>();
+    }
+
+    public void addVertex(String vertex) {
+        adjList.putIfAbsent(vertex, new LinkedList<>());
+    }
+
+    public void addEdge(String source, String destination, int weight) {
+        adjList.get(source).add(new Edge(destination, weight));
+    }
+
+    public Map<String, LinkedList<Edge>> getAdjList() {
+        return adjList;
+    }
+
+    public void displayGraph() {
+        for (String vertex : adjList.keySet()) {
+            System.out.print("Team " + vertex + " is connected to: ");
+            for (Edge edge : adjList.get(vertex)) {
+                System.out.print(edge + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public Map<String, Integer> dijkstra(String start) {
+        Map<String, Integer> distances = new HashMap<>();
+        PriorityQueue<String> pq = new PriorityQueue<>(Comparator.comparingInt(distances::get));
+        Set<String> visited = new HashSet<>();
+
+        for (String vertex : adjList.keySet()) {
+            distances.put(vertex, Integer.MAX_VALUE);
+        }
+        distances.put(start, 0);
+        pq.add(start);
+
+        while (!pq.isEmpty()) {
+            String current = pq.poll();
+            if (!visited.add(current)) {
+                continue;
+            }
+
+            for (Edge edge : adjList.get(current)) {
+                if (visited.contains(edge.destination)) {
+                    continue;
+                }
+
+                int newDist = distances.get(current) + edge.weight;
+                if (newDist < distances.get(edge.destination)) {
+                    distances.put(edge.destination, newDist);
+                    pq.add(edge.destination);
+                }
+            }
+        }
+
+        return distances;
+    }
+
+    public List<String> bfs(String start) {
+        List<String> order = new ArrayList<>();
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+
+        queue.add(start);
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            String current = queue.poll();
+            order.add(current);
+
+            for (Edge edge : adjList.get(current)) {
+                if (!visited.contains(edge.destination)) {
+                    queue.add(edge.destination);
+                    visited.add(edge.destination);
+                }
+            }
+        }
+
+        return order;
+    }
+
+    public List<String> dfs(String start) {
+        List<String> order = new ArrayList<>();
+        Stack<String> stack = new Stack<>();
+        Set<String> visited = new HashSet<>();
+
+        stack.push(start);
+
+        while (!stack.isEmpty()) {
+            String current = stack.pop();
+
+            if (!visited.add(current)) {
+                continue;
+            }
+
+            order.add(current);
+
+            for (Edge edge : adjList.get(current)) {
+                if (!visited.contains(edge.destination)) {
+                    stack.push(edge.destination);
+                }
+            }
+        }
+
+        return order;
+    }
+
+    public List<String> heuristicTSP(String start) {
+        List<String> order = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        String current = start;
+        order.add(current);
+        visited.add(current);
+
+        while (visited.size() < adjList.size()) {
+            Edge closest = null;
+            for (Edge edge : adjList.get(current)) {
+                if (!visited.contains(edge.destination) && (closest == null || edge.weight < closest.weight)) {
+                    closest = edge;
+                }
+            }
+
+            if (closest == null) {
+                break; // No more reachable vertices
+            }
+
+            current = closest.destination;
+            order.add(current);
+            visited.add(current);
+        }
+
+        return order;
+    }
+}
+
+class GraphGUI {
+    public static void createAndShowGUI(Graph graph, Map<String, Integer> dijkstraOrder,
+                                        java.util.List<String> bfsOrder, java.util.List<String> dfsOrder,
+                                        java.util.List<String> tspOrder) {
+        JFrame frame = new JFrame("NBA Teams Travel Graph");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(800, 600);
+
+        GraphPanel graphPanel = new GraphPanel(graph);
+        JPanel infoPanel = createInfoPanel(graph, dijkstraOrder, bfsOrder, dfsOrder, tspOrder);
+        
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, graphPanel, infoPanel);
+        splitPane.setResizeWeight(0.7);
+        
+        frame.add(splitPane);
+        frame.setVisible(true);
+    }
+
+    private static JPanel createInfoPanel(Graph graph, Map<String, Integer> dijkstraOrder,
+                                          java.util.List<String> bfsOrder, java.util.List<String> dfsOrder,
+                                          java.util.List<String> tspOrder) {
+        JPanel infoPanel = new JPanel(new GridLayout(4, 1));
+        
+        JPanel dijkstraPanel = createPanelWithBorder("Dijkstra Order", createTextArea(dijkstraOrder));
+        JPanel bfsPanel = createPanelWithBorder("BFS Order", createTextArea(graph, bfsOrder));
+        JPanel dfsPanel = createPanelWithBorder("DFS Order", createTextArea(graph, dfsOrder));
+        JPanel tspPanel = createPanelWithBorder("Heuristic TSP Order", createTextArea(graph, tspOrder));
+
+        infoPanel.add(dijkstraPanel);
+        infoPanel.add(bfsPanel);
+        infoPanel.add(dfsPanel);
+        infoPanel.add(tspPanel);
+
+        return infoPanel;
+    }
+    
+    private static JPanel createPanelWithBorder(String title, JTextArea textArea) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+        panel.add(new JScrollPane(textArea));
+        return panel;
+    }
+    
+    private static JTextArea createTextArea(Map<String, Integer> order) {
+        JTextArea textArea = new JTextArea(10, 20);
+        textArea.setEditable(false);
+        textArea.append("Total Distance: " + calculateTotalDistance(order) + " km\n\n");
+        order.forEach((team, distance) -> textArea.append(team + ": " + distance + " km\n"));
+        return textArea;
+    }
+
+    private static JTextArea createTextArea(Graph graph, java.util.List<String> order) {
+        JTextArea textArea = new JTextArea(10, 20);
+        textArea.setEditable(false);
+        textArea.append("Total Distance: " + calculateTotalDistance(graph, order) + " km\n\n");
+        order.forEach(team -> textArea.append(team + "\n"));
+        return textArea;
+    }
+
+    private static int calculateTotalDistance(Map<String, Integer> order) {
+        return order.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    private static int calculateTotalDistance(Graph graph, java.util.List<String> order) {
+        int totalDistance = 0;
+        
+        for (int i = 0; i < order.size() - 1; i++) {
+            String current = order.get(i);
+            String next = order.get(i + 1);
+            for (Graph.Edge edge : graph.getAdjList().get(current)) {
+                if (edge.destination.equals(next)) {
+                    totalDistance += edge.weight;
+                    break;
+                }
+            }
+        }
+        return totalDistance;
+    }
+}
+
+class GraphPanel extends JPanel {
+     private Graph graph;
+    private Map<String, Point> nodePositions;
+
+    public GraphPanel(Graph graph) {
+        this.graph = graph;
+        nodePositions = new HashMap<>();
+        setPreferredSize(new Dimension(800, 600));
+        initializeNodePositions();
+    }
+
+    private void initializeNodePositions() {
+        // Manually setting positions for simplicity
+        nodePositions.put("Spurs", new Point(400, 500));
+        nodePositions.put("Warriors", new Point(100, 100));
+        nodePositions.put("Celtics", new Point(700, 100));
+        nodePositions.put("Heat", new Point(700, 500));
+        nodePositions.put("Lakers", new Point(80, 200));
+        nodePositions.put("Suns", new Point(300, 400));
+        nodePositions.put("Magic", new Point(600, 400));
+        nodePositions.put("Nuggets", new Point(400, 100));
+        nodePositions.put("Thunder", new Point(400, 300));
+        nodePositions.put("Rockets", new Point(500, 300));
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawGraph(g);
+    }
+
+    private void drawGraph(Graphics g) {
+        Map<String, LinkedList<Graph.Edge>> adjList = graph.getAdjList();
+        g.setColor(Color.BLACK);
+
+        // Draw edges
+        for (String vertex : adjList.keySet()) {
+            Point src = nodePositions.get(vertex);
+            for (Graph.Edge edge : adjList.get(vertex)) {
+                Point dest = nodePositions.get(edge.destination);
+                g.drawLine(src.x, src.y, dest.x, dest.y);
+                // Draw weight
+                int midX = (src.x + dest.x) / 2;
+                int midY = (src.y + dest.y) / 2;
+                g.drawString(edge.weight + "km", midX, midY);
+            }
+        }
+
+        // Draw vertices
+        for (String vertex : nodePositions.keySet()) {
+            Point pos = nodePositions.get(vertex);
+            g.setColor(Color.RED);
+            g.fillOval(pos.x - 15, pos.y - 15, 30, 30);
+            g.setColor(Color.BLACK);
+            g.drawString(vertex, pos.x - 15, pos.y - 20);
+        }
+    }
+}
+
+
